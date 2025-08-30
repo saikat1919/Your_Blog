@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content-card">
+    <h1>Latest Blog Posts</h1>
+    <ul class="post-list">
+        {% for post in home_posts %}
+            <li class="post-item">
+                <a href="{% url 'posts_detail' pk=post.pk %}" class="post-title">{{post.title}}</a>
+                <p class="post-meta">By {{ post.user.user.username }} On {{ post.date|date:"M d, Y" }}</p>
+            </li>
+        {% empty %}
+            <li class="empty-state">No posts yet.</li>
+        {% endfor %}
+    </ul>
+
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

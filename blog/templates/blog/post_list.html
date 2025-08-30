@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content-card">
+    <h2>My Posts</h2>
+    {% if my_posts %}
+        <ul class="post-list">
+            {% for post in my_posts %}
+                <li class="post-item">
+                    <a href="{% url 'posts_detail' pk=post.pk %}" class="post-title">{{ post.title }}</a>
+                    <p class="post-meta">By {{ post.user.user }} - Created on {{ post.date|date:"F d, Y" }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-state">
+            <p>No posts yet.</p>
+            <a href="{% url 'create' %}" class="btn" style="margin-top: 1rem;">Create Your First Post</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

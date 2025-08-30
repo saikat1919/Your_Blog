@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="post-detail">
+    <div class="post-header">
+        <h3><strong>{{ post.title }}</strong></h3>
+        <h5 style="color: #718096; margin-bottom: 0.5rem;">Category: {{ post.category }}</h5>
+        <div class="post-meta">
+            <p><strong>Posted on:</strong> {{ post.date|date:"F d, Y" }}</p>
+            <p><strong>Last Update:</strong> {{ post.last_update|date:"F d, Y" }}</p>
+        </div>
+    </div>
+
+    <div class="post-content">
+        <h4>Content:</h4>
+        <div style="margin-top: 1rem;">{{ post.content|linebreaks }}</div>
+    </div>
+
+    <div class="interaction-section">
+        <div class="like-section">
+            <h4 class="like-count">Likes: {{ total_likes }}</h4>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'like_post' post.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    {% if user_liked %}
+                        <button type="submit" class="like-btn liked">❤️ Liked</button>
+                    {% else %}
+                        <button type="submit" class="like-btn">🤍 Like</button>
+                    {% endif %}
+                </form>
+            {% else %}
+                <p><a href="{% url 'login' %}" style="color: #667eea;">Login</a> to like this post.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if user.is_authenticated and post.user.user == user %}
+        <div class="post-actions">
+            <a href="{% url 'update' pk=post.pk %}" class="btn">Update</a>
+            <a href="{% url 'delete' pk=post.pk %}" class="btn btn-danger">Delete</a>
+        </div>
+    {% endif %}
+
+    <div class="comments-section">
+        <h3>Comments</h3>
+        <ul class="comment-list">
+            {% for comment in comments %}
+                <li class="comment-item">
+                    <div class="comment-text">{{ comment.comment_text }}</div>
+                    <p class="comment-meta"><strong>{{ comment.name }} on {{ comment.date|date:"M d, Y H:i" }}</strong></p>
+                    <div class="comment-likes">
+                        <h4>Likes: {{ comment.get_like_count }}</h4>
+                        {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'like_comment' comment.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                {% if comment.pk in liked_comment_ids %}
+                                    <button type="submit" class="like-btn liked">❤️ Liked</button>
+                                {% else %}
+                                    <button type="submit" class="like-btn">🤍 Like</button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <p><a href="{% url 'login' %}" style="color: #667eea;">Login</a> to like this comment.</p>
+                        {% endif %}
+                    </div>
+                </li>
+            {% empty %}
+                <li class="empty-state">No comments yet.</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Add a Comment</h3>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="helptext">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn">Comment</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

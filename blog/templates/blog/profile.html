@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="profile-card">
+    <div class="profile-info">
+        <h2 style="color: white; margin-bottom: 1rem;">User Profile</h2>
+        <p><strong>Name:</strong> {{ profile.user.first_name }} {{ profile.user.last_name }}</p>
+        <p><strong>Username:</strong> {{ profile.user.username }}</p>
+        <p><strong>Email:</strong> {{ profile.user.email }}</p>
+    </div>
+
+    <h2>My Posts</h2>
+    {% if posts %}
+        <ul class="post-list">
+            {% for post in posts %}
+            <li class="post-item">
+                <a href="{% url 'posts_detail' pk=post.pk %}" class="post-title">{{ post.title }}</a>
+                <p class="post-meta">Created on {{ post.date|date:"F d, Y" }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty-state">
+            <p>No posts yet.....</p>
+            <a href="{% url 'create' %}" class="btn" style="margin-top: 1rem;">Create Your First Post</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

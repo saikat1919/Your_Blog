@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content-card">
+    <div class="form-container" style="max-width: 800px;">
+        <h2>
+            {% if object and object.pk %}
+                Update Post
+            {% else %}
+                Create Post
+            {% endif %}
+        </h2>
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="helptext">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn">
+                {% if object and object.pk %}Update{% else %}Create{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
